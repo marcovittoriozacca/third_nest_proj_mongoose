@@ -24,7 +24,6 @@ export class SignupDto {
   @IsNotEmpty()
   @IsString()
   @Length(1, 15)
-  //isunique decorator must be added
   username: string;
 
   @IsOptional()
@@ -33,7 +32,6 @@ export class SignupDto {
 
   @IsNotEmpty()
   @IsEmail()
-  //isunique decorator must be added
   email: string;
 
   @IsNotEmpty()
