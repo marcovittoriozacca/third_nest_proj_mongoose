@@ -1,31 +1,44 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-
-class Fullname {
-    @Prop({required: false})
-    firstName?: string;
-
-    @Prop({required: false})
-    lastName?: string;
-}
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document, Schema as MongooseSchema } from 'mongoose';
 
 @Schema()
-export class User{
-    
-    @Prop({required: true, unique: true})
-    username: string;
+class Fullname {
+  @Prop({ required: false, default: null })
+  firstName?: string;
 
-    @Prop({type: Fullname, required: false,})
-    fullname?: Fullname;
+  @Prop({ required: false, default: null })
+  lastName?: string;
+}
 
-    @Prop({required: true, unique: true})
-    email: string;
+const FullnameSchema = new MongooseSchema({
+  firstName: { type: String, default: null },
+  lastName: { type: String, default: null },
+});
 
-    @Prop({required: true})
-    password: string;
+@Schema()
+export class User {
+  @Prop({ required: true, unique: true })
+  username: string;
 
-    @Prop({required: true})
-    dateOfBirth: Date;
+  @Prop({
+    type: FullnameSchema,
+    required: false,
+    default: { firstName: null, lastName: null },
+    _id: false,
+  })
+  fullname?: Fullname;
 
+  @Prop({ required: true, unique: true })
+  email: string;
+
+  @Prop({ required: true })
+  password: string;
+
+  @Prop({ required: true })
+  dateOfBirth: Date;
+
+  @Prop({ required: false, default: null })
+  image?: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
