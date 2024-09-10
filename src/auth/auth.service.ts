@@ -1,15 +1,14 @@
 import {
   BadRequestException,
-  HttpException,
-  HttpStatus,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { SignupDto } from './dto';
+import { SigninDto, SignupDto } from './dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from 'src/schemas/user.schema';
-import { Model, MongooseError } from 'mongoose';
+import { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
 import * as argon from 'argon2';
 
@@ -46,11 +45,35 @@ export class AuthService {
     }
   }
 
-  async signin() {
-    return;
+  async signin(signinDto: SigninDto): Promise<{ access_token: string }> {
+    try {
+      const { email, password } = signinDto;
+      const user = await this.userModel.findOne({ email });
+
+      if (!user) {
+        throw new NotFoundException('Invalid Email');
+      }
+
+      const isPasswordCorrect = await argon.verify(
+        user.password,
+        signinDto.password + this.config.get('PEPPER_KEY'),
+      );
+
+      if (!isPasswordCorrect) {
+        throw new BadRequestException('Email or password invalid');
+      }
+
+      const access_token = await this.signToken({
+        sub: user.id,
+        username: user.username,
+      });
+      return { access_token };
+    } catch (err) {
+      throw err;
+    }
   }
 
-  async signToken(payload: { sub: string; username: string }) {
+  async signToken(payload: { sub: string; username: string }): Promise<string> {
     return await this.jwt.signAsync(payload, {
       secret: this.config.get('JWT_SECRET'),
       expiresIn: '1d',
