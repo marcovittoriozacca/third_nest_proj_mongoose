@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import {ConfigModule, ConfigService} from '@nestjs/config'
+import { UserModule } from './users/user.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -12,7 +13,8 @@ import {ConfigModule, ConfigService} from '@nestjs/config'
       useFactory: (configService: ConfigService) => ({
         uri: configService.get('DB_URL'),
       })
-    })],
+    }),
+    UserModule],
 })
 export class AppModule {
 }
