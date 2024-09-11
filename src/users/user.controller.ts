@@ -10,6 +10,7 @@ import { UserService } from './user.service';
 import { IsIdValid } from './guard/IsIdValid.guard';
 import { JwtAuthGuard } from 'src/auth/guard';
 import { Request } from 'express';
+import { IsTheSameUser } from './guard';
 
 @Controller('users')
 export class UserController {
@@ -21,16 +22,8 @@ export class UserController {
   }
 
   @Get(':id')
-  @UseGuards(IsIdValid, JwtAuthGuard)
-  async getUserById(@Param('id') id: string, @Req() req: Request) {
-    const newUserObj = req.user as { id: string; username: string };
-    const userId = newUserObj.id;
-    if (id !== userId) {
-      throw new UnauthorizedException(
-        'You cant access to this user informations',
-      );
-    }
-
+  @UseGuards(IsIdValid, JwtAuthGuard, IsTheSameUser)
+  async getUserById(@Param('id') id: string) {
     return this.userService.getUserById(id);
   }
 }
