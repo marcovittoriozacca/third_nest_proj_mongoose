@@ -34,13 +34,6 @@ export class AuthService {
 
       return { access_token };
     } catch (err) {
-      if (err.code === 11000) {
-        const field = Object.keys(err.errorResponse.keyPattern)[0];
-        const value = err.keyValue[field];
-        throw new BadRequestException(
-          `This ${field}: ${value} is already taken`,
-        );
-      }
       throw new InternalServerErrorException('Internal Server Error');
     }
   }
@@ -56,7 +49,7 @@ export class AuthService {
 
       const isPasswordCorrect = await argon.verify(
         user.password,
-        signinDto.password + this.config.get('PEPPER_KEY'),
+        password + this.config.get('PEPPER_KEY'),
       );
 
       if (!isPasswordCorrect) {
