@@ -3,13 +3,14 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from 'src/schemas/user.schema';
+import { IsIdValid } from './guard/IsIdValid.guard';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],
   controllers: [UserController],
-  providers: [UserService],
-  exports: [MongooseModule],
+  providers: [UserService, IsIdValid],
+  exports: [MongooseModule, IsIdValid],
 })
 export class UserModule {}
