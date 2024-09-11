@@ -1,8 +1,6 @@
 import {
-  IsDate,
   IsDateString,
   IsEmail,
-  IsNotEmpty,
   IsObject,
   IsOptional,
   IsString,
@@ -22,25 +20,29 @@ class Fullname {
   lastName?: string;
 }
 
-export class SignupDto {
-  @IsNotEmpty()
+export class UpdateUser {
+  @IsOptional()
   @IsString()
   @Length(1, 15)
-  username: string;
+  username?: string;
 
   @IsOptional()
   @IsObject()
   fullname?: Fullname;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsEmail()
-  email: string;
+  email?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsStrongPassword()
-  password: string;
+  password?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
+  @IsString()
+  image?: string;
+
+  @IsOptional()
   @IsDateString()
-  dateOfBirth: Date;
+  dateOfBirth?: Date;
 }
